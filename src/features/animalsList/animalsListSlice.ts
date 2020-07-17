@@ -11,11 +11,11 @@ export interface Animal { // Animal shape.
   habitat: string;
 }
 
-type AnimalsState = {
+type AnimalsListState = {
   animals: Animal[];
 }
 
-const initialState: AnimalsState = {
+const initialState: AnimalsListState = {
   animals: []
 };
 
@@ -25,7 +25,7 @@ const initialState: AnimalsState = {
  */
 
 // Async action to get all the animals from the DB.
-const getAnimals = createAsyncThunk<
+const getAnimalsList = createAsyncThunk<
   // Return type of the payload creator.
   Animal[],
   // Types for ThunkAPI.
@@ -38,7 +38,7 @@ const getAnimals = createAsyncThunk<
 
   switch (res.status) {
     case 200:
-      return resJSON as Animal[]; // Server returns a list of animals.
+      return resJSON as Animal[]; // Server returns the list of animals.
 
     case 500:
       return thunkAPI.rejectWithValue(res.status); // TODO: Handle HTTP 500 error correctly.
@@ -50,24 +50,24 @@ const getAnimals = createAsyncThunk<
  *  https://redux-toolkit.js.org/tutorials/intermediate-tutorial#understanding-slices
  */
 
-export const animalsSlice = createSlice({
-  name: 'animals',
+export const animalsListSlice = createSlice({
+  name: 'animalsList',
   initialState,
   reducers: {
-    setAnimals: (state, action: PayloadAction<Animal[]>) => {
+    set: (state, action: PayloadAction<Animal[]>) => {
       state.animals = action.payload;
     },
-    addAnimal: (state, action: PayloadAction<Animal>) => {
+    add: (state, action: PayloadAction<Animal>) => {
       state.animals = [...state.animals, action.payload];
     },
-    updateAnimal: (state, action: PayloadAction<Animal>) => {
+    update: (state, action: PayloadAction<Animal>) => {
       state.animals = state.animals.map((animal: Animal): Animal => {
         return animal.commonName === action.payload.commonName ?
           action.payload :
           animal
       });
     },
-    removeAnimal: (state, action: PayloadAction<string>) => {
+    remove: (state, action: PayloadAction<string>) => {
       state.animals = state.animals.filter((animal: Animal): boolean => {
         return animal.commonName !== action.payload
       });

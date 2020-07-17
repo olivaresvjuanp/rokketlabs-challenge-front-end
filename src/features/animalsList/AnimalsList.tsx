@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const App: React.FunctionComponent = () => {
+export const AnimalsList: React.FunctionComponent = () => {
   return (
     <p>Hello World</p>
   );

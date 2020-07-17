@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { animalsSlice } from '../features/animals/animalsSlice';
+import { animalsListSlice } from '../features/animalsList/animalsListSlice';
+import { systemSlice } from '../features/system/systemSlice';
 
 export const store = configureStore({
   reducer: {
-    animals: animalsSlice.reducer
+    animals: animalsListSlice.reducer,
+    system: systemSlice.reducer
   }
 });
 
