@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import {
   CssBaseline,
   LinearProgress,
-  Container
+  Container,
+  Box
 } from '@material-ui/core';
 import {
   createMuiTheme,
@@ -18,6 +19,7 @@ import 'fontsource-roboto';
 import { RootState } from './app/store';
 import { Header } from './features/header/Header';
 import AnimalsList from './features/animalsList/AnimalsList';
+import zIndex from '@material-ui/core/styles/zIndex';
 
 const useStyles = makeStyles({
   linearProgress: {
@@ -30,7 +32,8 @@ const useStyles = makeStyles({
     left: 0,
     position: 'absolute',
     right: 0,
-    top: 48
+    top: 48,
+    zIndex: -1
   }
 });
 
@@ -39,7 +42,8 @@ export const App: React.FunctionComponent = () => {
   const theme = createMuiTheme({
     palette: {
       primary: {
-        main: deepPurple[500]
+        main: deepPurple[500],
+        dark: deepPurple[500] // TODO: Bad contrast.
       },
       type: useSelector((state: RootState) => state.system.theme.palette.type)
     }
@@ -135,9 +139,11 @@ export const App: React.FunctionComponent = () => {
           detectRetina: true
         }}
       />
-      <Container maxWidth='xl'>
-        <AnimalsList />
-      </Container>
+      <Box mb={4} mt={2}>
+        <Container maxWidth='xl'>
+          <AnimalsList />
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 };

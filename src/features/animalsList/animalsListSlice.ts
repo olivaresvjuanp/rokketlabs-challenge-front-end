@@ -4,7 +4,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 
-import { AppDispatch } from '../../app/store';
+import { setLoading } from '../system/systemSlice';
 
 export interface Animal { // Animal shape.
   photoUrl: string;
@@ -15,10 +15,12 @@ export interface Animal { // Animal shape.
 
 type AnimalsListState = {
   animals: Animal[];
+  count: number;
 }
 
 const initialState: AnimalsListState = {
-  animals: []
+  animals: [],
+  count: 0
 };
 
 /**
@@ -30,8 +32,11 @@ export const animalsListSlice = createSlice({
   name: 'animalsList',
   initialState,
   reducers: {
-    set: (state, action: PayloadAction<Animal[]>) => {
+    setAnimals: (state, action: PayloadAction<Animal[]>) => {
       state.animals = action.payload;
+    },
+    setCount: (state, action: PayloadAction<number>) => {
+      state.count = action.payload;
     },
     add: (state, action: PayloadAction<Animal>) => {
       state.animals = [...state.animals, action.payload];
@@ -53,7 +58,8 @@ export const animalsListSlice = createSlice({
 
 // Export animalsSlice actions (we will be able to use them with react-redux's useDispatch hook).
 export const {
-  set,
+  setAnimals,
+  setCount,
   add,
   update,
   remove
@@ -66,12 +72,17 @@ export const {
 
 // Async action to get all the animals from the DB.
 export const getAnimalsList = createAsyncThunk('animals/get', async (temp, thunkApi) => {
+  thunkApi.dispatch(setLoading(true));
+
   const res = await fetch('http://localhost:3000/api/animals'); // TODO: We have to set the API URL in config.json file.
   const resJSON = await res.json();
 
+  thunkApi.dispatch(setLoading(false));
+
   switch (res.status) {
     case 200:
-      return resJSON as Animal[]; // Server returns the list of animals.
+      thunkApi.dispatch(setAnimals(resJSON.animals as Animal[]));
+      thunkApi.dispatch(setCount(resJSON.count as number));
 
     case 500:
       return thunkApi.rejectWithValue(res.status); // TODO: Handle HTTP 500 error correctly.

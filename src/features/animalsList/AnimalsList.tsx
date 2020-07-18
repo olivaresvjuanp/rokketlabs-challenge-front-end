@@ -3,20 +3,40 @@ import {
   connect,
   ConnectedProps
 } from 'react-redux';
-import { Fab } from '@material-ui/core';
+import {
+  Paper,
+  Fab,
+  Box,
+  Grid
+} from '@material-ui/core';
 import {
   Theme,
   createStyles,
   WithStyles,
   withStyles
 } from '@material-ui/core/styles';
+import {
+  Pagination,
+  Skeleton
+} from '@material-ui/lab';
 import { Add as AddIcon } from '@material-ui/icons';
 
 import { RootState } from '../../app/store';
+import { AnimalsListItem } from './AnimalsListItem';
 import { getAnimalsList } from './animalsListSlice';
-import { setLoading } from '../system/systemSlice';
 
 const styles = (theme: Theme) => createStyles({
+  paper: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    padding: theme.spacing(1),
+    width: 'fit-content'
+  },
+  pagination: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column'
+  },
   fab: {
     bottom: theme.spacing(2),
     position: 'fixed',
@@ -31,21 +51,59 @@ const styles = (theme: Theme) => createStyles({
 interface AnimalsProps extends PropsFromRedux, WithStyles<typeof styles> {
 }
 
-class AnimalsList extends React.Component<AnimalsProps> {
-  componentDidMount() {
-    this.props.setLoading(true);
+interface AnimalsOwnState {
+  page: number;
+}
 
-    this.props.getAnimalsList()
-      .then(animals => {
-        this.props.setLoading(false);
-      });
+class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
+  constructor(props: AnimalsProps) {
+    super(props);
+
+    this.state = {
+      page: 1
+    };
+  }
+
+  componentDidMount() {
+    this.props.getAnimalsList();
   }
 
   render() {
     const { classes } = this.props;
+    console.log(this.props.animals);
 
     return (
       <React.Fragment>
+        <Paper
+          className={classes.paper}
+          elevation={2}
+          square
+        >
+          <Pagination
+            className={classes.pagination}
+            color='primary'
+            count={Math.ceil(this.props.count / 5)}
+            onChange={(event: React.ChangeEvent<unknown>, page: number) => {
+            }}
+            page={this.state.page}
+            showFirstButton
+            showLastButton
+          />
+        </Paper>
+        <Box mt={2} />
+        {this.props.loading ?
+          <p>Loading</p>
+          :
+          <Grid
+            container
+            justify='center'
+            spacing={2}
+          >
+            {
+              this.props.animals.map(animal => <AnimalsListItem key={animal.commonName} {...animal} />)
+            }
+          </Grid>
+        }
         <Fab className={classes.fab} color='primary' variant='extended'>
           <AddIcon className={classes.extendedIcon} />
           ADD ANIMAL
@@ -62,12 +120,15 @@ class AnimalsList extends React.Component<AnimalsProps> {
  */
 
 // Map state to props.
-const mapState = (state: RootState) => ({});
+const mapState = (state: RootState) => ({
+  animals: state.animals.animals,
+  count: state.animals.count,
+  loading: state.system.loading
+});
 
 // Map dispatch to props.
 const mapDispatch = {
-  getAnimalsList,
-  setLoading
+  getAnimalsList
 };
 
 const connector = connect(

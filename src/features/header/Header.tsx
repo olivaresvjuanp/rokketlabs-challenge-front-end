@@ -33,7 +33,11 @@ export const Header: React.FunctionComponent = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   return (
-    <AppBar color='inherit' position='static'>
+    <AppBar
+      color='inherit'
+      elevation={4}
+      position='static'
+    >
       <Toolbar variant='dense'>
         <Typography className={classes.title} variant='h6'>
           Rokketlabs Full Stack Challenge
