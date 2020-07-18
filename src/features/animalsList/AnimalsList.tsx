@@ -21,9 +21,10 @@ import {
 } from '@material-ui/lab';
 import { Add as AddIcon } from '@material-ui/icons';
 
-import { RootState } from '../../app/store';
+import { AddAnimalDialog } from './AddAnimalDialog';
 import { AnimalsListItem } from './AnimalsListItem';
 import { thunkGetAnimalsList } from './animalsListSlice';
+import { RootState } from '../../app/store';
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -52,6 +53,7 @@ interface AnimalsProps extends PropsFromRedux, WithStyles<typeof styles> {
 }
 
 interface AnimalsOwnState {
+  openAddAnimalDialog: boolean;
   page: number;
 }
 
@@ -60,8 +62,11 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
     super(props);
 
     this.state = {
+      openAddAnimalDialog: false,
       page: 1
     };
+
+    this.setOpenAddAnimalDialog = this.setOpenAddAnimalDialog.bind(this);
   }
 
   componentDidMount() {
@@ -70,7 +75,6 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
 
   render() {
     const { classes } = this.props;
-    console.log(this.props.animals);
 
     return (
       <React.Fragment>
@@ -104,12 +108,29 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
             }
           </Grid>
         }
-        <Fab className={classes.fab} color='primary' variant='extended'>
+        <Fab
+          className={classes.fab}
+          color='primary'
+          onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            this.setOpenAddAnimalDialog(true);
+          }}
+          variant='extended'
+        >
           <AddIcon className={classes.extendedIcon} />
           ADD ANIMAL
         </Fab>
+        <AddAnimalDialog
+          openAddAnimalDialog={this.state.openAddAnimalDialog}
+          setOpenAddAnimalDialog={this.setOpenAddAnimalDialog}
+        />
       </React.Fragment>
     );
+  }
+
+  setOpenAddAnimalDialog(open: boolean) {
+    this.setState({
+      openAddAnimalDialog: open
+    });
   }
 }
 

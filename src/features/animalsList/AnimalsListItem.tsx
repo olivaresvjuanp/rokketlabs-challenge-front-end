@@ -26,6 +26,9 @@ import {
 import { RootState } from '../../app/store';
 
 const useStyles = makeStyles({
+  card: {
+    width: 320
+  },
   cardMedia: {
     width: 320
   },
@@ -49,7 +52,7 @@ export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
       {...(useSelector((state: RootState) => !state.system.loading) ? { timeout: 1000 } : {})}
     >
       <Grid item>
-        <Card elevation={elevation} square>
+        <Card className={classes.card} elevation={elevation} square>
           <CardActionArea
             //onClick={}
             onMouseEnter={() => setElevation(4)}
@@ -57,8 +60,9 @@ export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
           >
             <CardMedia
               className={classes.cardMedia}
+              alt={props.commonName}
               component='img'
-              image='https://rokketlabs-full-stack-challenge.s3-sa-east-1.amazonaws.com/1.jpg'
+              image={props.photoUrl}
               title={props.commonName}
             />
           </CardActionArea>
