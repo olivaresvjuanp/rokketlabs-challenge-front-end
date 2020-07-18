@@ -1,5 +1,10 @@
 import React from 'react';
 import {
+  useSelector,
+  useDispatch
+} from 'react-redux';
+import {
+  Grow,
   Grid,
   Card,
   CardActionArea,
@@ -14,64 +19,77 @@ import {
   useTheme
 } from '@material-ui/core/styles';
 
-import { Animal } from './animalsListSlice';
+import {
+  Animal,
+  thunkDeleteAnimal
+} from './animalsListSlice';
+import { RootState } from '../../app/store';
 
 const useStyles = makeStyles({
-  card: {
-    width: 240
-  },
   cardMedia: {
-    height: 240,
+    width: 320
   },
   cardContent: {
-    height: (240 / 2) + (60 - 46)
+    //height: (240 / 2) + (60 - 46)
   }
 });
 
 export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
+  const dispatch = useDispatch();
   const classes = useStyles();
   const theme = useTheme();
   const [elevation, setElevation] = React.useState(2);
 
   return (
-    <Grid item>
-      <Card className={classes.card} elevation={elevation} square>
-        <CardActionArea
-          //onClick={}
-          onMouseEnter={() => setElevation(4)}
-          onMouseLeave={() => setElevation(2)}
-        >
-          <CardMedia
-            className={classes.cardMedia}
-            image='/default-avatar.jpg'
-            title='Example avatar (Chris Redfield from Resident Evil 7)'
-          />
-        </CardActionArea>
-        <CardContent className={classes.cardContent}>
-          <Typography gutterBottom>{props.commonName}</Typography>
-          <Typography color='textSecondary' noWrap variant='body2'>{props.habitat}</Typography>
-        </CardContent>
-        <CardActions>
-          <Button
-            color='primary'
+    <Grow
+      in={useSelector((state: RootState) => !state.system.loading)}
+      style={{
+        transformOrigin: '0 0 0'
+      }}
+      {...(useSelector((state: RootState) => !state.system.loading) ? { timeout: 1000 } : {})}
+    >
+      <Grid item>
+        <Card elevation={elevation} square>
+          <CardActionArea
             //onClick={}
             onMouseEnter={() => setElevation(4)}
             onMouseLeave={() => setElevation(2)}
-            size='small'
           >
-            View
+            <CardMedia
+              className={classes.cardMedia}
+              component='img'
+              image='https://rokketlabs-full-stack-challenge.s3-sa-east-1.amazonaws.com/1.jpg'
+              title={props.commonName}
+            />
+          </CardActionArea>
+          <CardContent className={classes.cardContent}>
+            <Typography gutterBottom>{props.commonName}</Typography>
+            <Typography color='textSecondary' noWrap variant='body2'>{props.habitat}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              color='primary'
+              //onClick={}
+              onMouseEnter={() => setElevation(4)}
+              onMouseLeave={() => setElevation(2)}
+              size='small'
+            >
+              View
           </Button>
-          <Button
-            color='primary'
-            //onClick={}
-            onMouseEnter={() => setElevation(4)}
-            onMouseLeave={() => setElevation(2)}
-            size='small'
-          >
-            Delete
+            <Button
+              color='primary'
+              onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                dispatch(thunkDeleteAnimal(props.commonName));
+              }}
+              onMouseEnter={() => setElevation(4)}
+              onMouseLeave={() => setElevation(2)}
+              size='small'
+            >
+              Delete
           </Button>
-        </CardActions>
-      </Card>
-    </Grid>
+          </CardActions>
+        </Card>
+      </Grid>
+    </Grow>
   );
 };

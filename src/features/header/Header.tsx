@@ -28,8 +28,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const Header: React.FunctionComponent = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   return (

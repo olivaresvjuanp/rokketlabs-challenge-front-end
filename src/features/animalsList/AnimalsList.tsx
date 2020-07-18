@@ -23,7 +23,7 @@ import { Add as AddIcon } from '@material-ui/icons';
 
 import { RootState } from '../../app/store';
 import { AnimalsListItem } from './AnimalsListItem';
-import { getAnimalsList } from './animalsListSlice';
+import { thunkGetAnimalsList } from './animalsListSlice';
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -65,7 +65,7 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
   }
 
   componentDidMount() {
-    this.props.getAnimalsList();
+    this.props.thunkGetAnimalsList();
   }
 
   render() {
@@ -128,7 +128,7 @@ const mapState = (state: RootState) => ({
 
 // Map dispatch to props.
 const mapDispatch = {
-  getAnimalsList
+  thunkGetAnimalsList
 };
 
 const connector = connect(
