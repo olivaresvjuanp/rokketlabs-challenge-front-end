@@ -4,6 +4,8 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit';
 
+import { AppDispatch } from '../../app/store';
+
 export interface Animal { // Animal shape.
   photoUrl: string;
   commonName: string;
@@ -20,34 +22,8 @@ const initialState: AnimalsListState = {
 };
 
 /**
- * Async actions.
- *  https://redux-toolkit.js.org/tutorials/advanced-tutorial#thinking-in-thunks
- */
-
-// Async action to get all the animals from the DB.
-const getAnimalsList = createAsyncThunk<
-  // Return type of the payload creator.
-  Animal[],
-  // Types for ThunkAPI.
-  {
-    rejectWithValue: any // HTTP status code.
-  }
->('animals/get', async thunkAPI => {
-  const res = await fetch('http://localhost:3000/api/animals'); // TODO: We have to set the API URL in config.json file.
-  const resJSON = await res.json();
-
-  switch (res.status) {
-    case 200:
-      return resJSON as Animal[]; // Server returns the list of animals.
-
-    case 500:
-      return thunkAPI.rejectWithValue(res.status); // TODO: Handle HTTP 500 error correctly.
-  }
-});
-
-/**
- * Slice.
- *  https://redux-toolkit.js.org/tutorials/intermediate-tutorial#understanding-slices
+ * Slice:
+ * https://redux-toolkit.js.org/tutorials/intermediate-tutorial#understanding-slices
  */
 
 export const animalsListSlice = createSlice({
@@ -72,5 +48,32 @@ export const animalsListSlice = createSlice({
         return animal.commonName !== action.payload
       });
     }
+  }
+});
+
+// Export animalsSlice actions (we will be able to use them with react-redux's useDispatch hook).
+export const {
+  set,
+  add,
+  update,
+  remove
+} = animalsListSlice.actions;
+
+/**
+ * Async actions:
+ * https://redux-toolkit.js.org/tutorials/advanced-tutorial#thinking-in-thunks
+ */
+
+// Async action to get all the animals from the DB.
+export const getAnimalsList = createAsyncThunk('animals/get', async (temp, thunkApi) => {
+  const res = await fetch('http://localhost:3000/api/animals'); // TODO: We have to set the API URL in config.json file.
+  const resJSON = await res.json();
+
+  switch (res.status) {
+    case 200:
+      return resJSON as Animal[]; // Server returns the list of animals.
+
+    case 500:
+      return thunkApi.rejectWithValue(res.status); // TODO: Handle HTTP 500 error correctly.
   }
 });
