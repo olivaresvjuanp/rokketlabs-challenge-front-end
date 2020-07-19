@@ -72,7 +72,7 @@ export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
           </CardContent>
           <CardActions>
             <Button
-              color='primary'
+              color='secondary'
               //onClick={}
               onMouseEnter={() => setElevation(4)}
               onMouseLeave={() => setElevation(2)}
@@ -81,7 +81,7 @@ export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
               View
           </Button>
             <Button
-              color='primary'
+              color='secondary'
               onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
                 dispatch(thunkDeleteAnimal(props.commonName));
               }}

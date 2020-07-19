@@ -31,13 +31,26 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const App: React.FunctionComponent = () => {
+  const themePaletteType = useSelector((state: RootState) => state.system.theme.palette.type);
+
   // Custom Material-UI theme.
   const theme = createMuiTheme({
+    overrides: {
+      MuiFilledInput: {
+        root: {
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0
+        }
+      }
+    },
     palette: {
       primary: {
         main: deepPurple[500]
       },
-      type: useSelector((state: RootState) => state.system.theme.palette.type)
+      secondary: {
+        main: deepPurple[themePaletteType === 'light' ? 700 : 300]
+      },
+      type: themePaletteType
     }
   });
 
@@ -91,8 +104,7 @@ export const App: React.FunctionComponent = () => {
               value: theme.palette.primary.main
             },
             links: {
-              color: theme.palette.common[useSelector((state: RootState) =>
-                state.system.theme.palette.type) === 'light' ? 'black' : 'white'],
+              color: theme.palette.common[themePaletteType === 'light' ? 'black' : 'white'],
               distance: 150,
               enable: true,
               opacity: 0.25,

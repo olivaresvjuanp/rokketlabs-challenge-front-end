@@ -59,7 +59,9 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
         <DialogContentText>
           We recommend to looking for animals here:
           {' '}
-          <Link href='https://www.nationalgeographic.org/projects/photo-ark/explore/'>National Geographic Photo Ark</Link>
+          <Link color='secondary' href='https://www.nationalgeographic.org/projects/photo-ark/explore/'>
+            National Geographic Photo Ark
+          </Link>
         </DialogContentText>
         <form
           id='add-animal-form'
@@ -76,8 +78,10 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
         >
           <TextField
             autoFocus
+            color='secondary'
             disabled={loading}
             error={false}
+            helperText='It must be a valid URL.'
             fullWidth
             label='Photo URL'
             name='photo-url'
@@ -86,9 +90,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
             }}
             required
             value={photoUrl}
+            variant='filled'
           />
           <Box mt={2} />
           <TextField
+            color='secondary'
             disabled={loading}
             error={false}
             fullWidth
@@ -99,9 +105,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
             }}
             required
             value={commonName}
+            variant='filled'
           />
           <Box mt={2} />
           <TextField
+            color='secondary'
             disabled={loading}
             error={false}
             fullWidth
@@ -112,9 +120,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
             }}
             required
             value={scientificName}
+            variant='filled'
           />
           <Box mt={2} />
           <TextField
+            color='secondary'
             disabled={loading}
             error={false}
             fullWidth
@@ -127,12 +137,13 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
             required
             rows={5}
             value={habitat}
+            variant='filled'
           />
         </form>
       </DialogContent>
       <DialogActions disableSpacing>
         <Button
-          color='primary'
+          color='secondary'
           disabled={loading}
           onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
             props.setOpenAddAnimalDialog(false);
@@ -141,7 +152,7 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
           CANCEL
         </Button>
         <Button
-          color='primary'
+          color='secondary'
           disabled={loading}
           form='add-animal-form'
           type='submit'
