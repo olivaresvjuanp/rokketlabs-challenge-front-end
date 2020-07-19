@@ -5,6 +5,8 @@ import {
 } from 'react-redux';
 import {
   AppBar,
+  Box,
+  LinearProgress,
   Toolbar,
   Typography,
   IconButton,
@@ -22,6 +24,9 @@ import { RootState } from '../../app/store';
 import { setThemePaletteType } from '../system/systemSlice';
 
 const useStyles = makeStyles(theme => ({
+  linearProgress: {
+    zIndex: theme.zIndex.modal + 1
+  },
   title: {
     flexGrow: 1
   }
@@ -38,6 +43,9 @@ export const Header: React.FunctionComponent = () => {
       elevation={4}
       position='static'
     >
+      <Box height={4}>
+        {useSelector((state: RootState) => state.system.loading) && <LinearProgress className={classes.linearProgress} />}
+      </Box>
       <Toolbar variant='dense'>
         <Typography className={classes.title} variant='h6'>
           Rokketlabs Full Stack Challenge

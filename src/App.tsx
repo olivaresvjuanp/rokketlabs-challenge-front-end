@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import {
   CssBaseline,
-  LinearProgress,
   Container,
   Box
 } from '@material-ui/core';
@@ -19,14 +18,8 @@ import 'fontsource-roboto';
 import { RootState } from './app/store';
 import { Header } from './features/header/Header';
 import AnimalsList from './features/animalsList/AnimalsList';
-import zIndex from '@material-ui/core/styles/zIndex';
 
-const useStyles = makeStyles({
-  linearProgress: {
-    position: 'fixed',
-    top: 0,
-    width: '100%'
-  },
+const useStyles = makeStyles(theme => ({
   particles: {
     bottom: 0,
     left: 0,
@@ -35,15 +28,14 @@ const useStyles = makeStyles({
     top: 48,
     zIndex: -1
   }
-});
+}));
 
 export const App: React.FunctionComponent = () => {
   // Custom Material-UI theme.
   const theme = createMuiTheme({
     palette: {
       primary: {
-        main: deepPurple[500],
-        dark: deepPurple[500] // TODO: Bad contrast.
+        main: deepPurple[500]
       },
       type: useSelector((state: RootState) => state.system.theme.palette.type)
     }
@@ -55,7 +47,6 @@ export const App: React.FunctionComponent = () => {
     <ThemeProvider theme={theme}>
       {/* Kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
-      {useSelector((state: RootState) => state.system.loading) && <LinearProgress className={classes.linearProgress} />}
       <Header />
       <Particles
         className={classes.particles}

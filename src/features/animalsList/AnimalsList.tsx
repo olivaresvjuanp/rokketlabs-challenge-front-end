@@ -96,7 +96,7 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
         </Paper>
         <Box mt={2} />
         {this.props.loading ?
-          <p>Loading</p>
+          <p></p>
           :
           <Grid
             container

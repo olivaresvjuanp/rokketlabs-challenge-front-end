@@ -43,6 +43,7 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
 
   return (
     <Dialog
+      disableBackdropClick={loading}
       fullWidth
       maxWidth='xs'
       open={props.openAddAnimalDialog}
@@ -132,6 +133,7 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
       <DialogActions disableSpacing>
         <Button
           color='primary'
+          disabled={loading}
           onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
             props.setOpenAddAnimalDialog(false);
           }}
@@ -140,6 +142,7 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
         </Button>
         <Button
           color='primary'
+          disabled={loading}
           form='add-animal-form'
           type='submit'
         >
