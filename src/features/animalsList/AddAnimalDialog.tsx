@@ -36,19 +36,32 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-  const [photoUrl, setPhotoUrl] = React.useState('');
+
+  // Default photo for testing.
+  const defaultPhotoUrl = 'https://rokketlabs-full-stack-challenge.s3-sa-east-1.amazonaws.com/default-animal-photo.jpg';
+  const [photoUrl, setPhotoUrl] = React.useState(defaultPhotoUrl);
+
   const [commonName, setCommonName] = React.useState('');
   const [scientificName, setScientificName] = React.useState('');
   const [habitat, setHabitat] = React.useState('');
 
   return (
     <Dialog
+      aria-describedby='add-animal-dialog'
+      aria-labelledby='Add animal dialog'
       disableBackdropClick={loading}
       fullWidth
+      //keepMounted
       maxWidth='xs'
       open={props.openAddAnimalDialog}
-      onClose={(event: {}, reason: "backdropClick" | "escapeKeyDown") => {
+      onClose={() => {
         props.setOpenAddAnimalDialog(false);
+      }}
+      onExited={() => {
+        setPhotoUrl(defaultPhotoUrl);
+        setCommonName('');
+        setScientificName('');
+        setHabitat('');
       }}
       PaperProps={{
         square: true

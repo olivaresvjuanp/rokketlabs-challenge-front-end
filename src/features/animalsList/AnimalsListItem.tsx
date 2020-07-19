@@ -1,10 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  useSelector,
-  useDispatch
-} from 'react-redux';
-import {
-  Grow,
   Grid,
   Card,
   CardActionArea,
@@ -14,86 +10,69 @@ import {
   CardActions,
   Button
 } from '@material-ui/core';
-import {
-  makeStyles,
-  useTheme
-} from '@material-ui/core/styles';
+import { red } from '@material-ui/core/colors';
+import { makeStyles } from '@material-ui/core/styles';
 
 import {
   Animal,
   thunkDeleteAnimal
 } from './animalsListSlice';
-import { RootState } from '../../app/store';
 
 const useStyles = makeStyles({
   card: {
     width: 320
   },
-  cardMedia: {
-    width: 320
-  },
-  cardContent: {
-    //height: (240 / 2) + (60 - 46)
+  deleteButton: {
+    color: red[500]
   }
 });
 
-export const AnimalsListItem: React.FunctionComponent<Animal> = props => {
+const FunctionComponent: React.FunctionComponent<Animal> = props => {
+  console.debug(`Rendering MemorizedAnimalsListItem (props.commonName: ${props.commonName})`);
+
   const dispatch = useDispatch();
   const classes = useStyles();
-  const theme = useTheme();
-  const [elevation, setElevation] = React.useState(2);
 
   return (
-    <Grow
-      in={useSelector((state: RootState) => !state.system.loading)}
-      style={{
-        transformOrigin: '0 0 0'
-      }}
-      {...(useSelector((state: RootState) => !state.system.loading) ? { timeout: 1000 } : {})}
-    >
-      <Grid item>
-        <Card className={classes.card} elevation={elevation} square>
-          <CardActionArea
-            //onClick={}
-            onMouseEnter={() => setElevation(4)}
-            onMouseLeave={() => setElevation(2)}
+    <Grid item>
+      <Card className={classes.card} elevation={2} square>
+        <CardActionArea>
+          <CardMedia
+            alt={props.commonName}
+            component='img'
+            image={props.photoUrl}
+            onDragStart={(event: React.DragEvent<HTMLImageElement>): void => {
+              event.preventDefault();
+            }}
+            title={props.commonName}
+          />
+        </CardActionArea>
+        <CardContent>
+          <Typography gutterBottom>{props.commonName}</Typography>
+          <Typography color='textSecondary' noWrap variant='body2'>{props.scientificName}</Typography>
+        </CardContent>
+        <CardActions>
+          <Button
+            color='secondary'
+            size='small'
           >
-            <CardMedia
-              className={classes.cardMedia}
-              alt={props.commonName}
-              component='img'
-              image={props.photoUrl}
-              title={props.commonName}
-            />
-          </CardActionArea>
-          <CardContent className={classes.cardContent}>
-            <Typography gutterBottom>{props.commonName}</Typography>
-            <Typography color='textSecondary' noWrap variant='body2'>{props.habitat}</Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              color='secondary'
-              //onClick={}
-              onMouseEnter={() => setElevation(4)}
-              onMouseLeave={() => setElevation(2)}
-              size='small'
-            >
-              View
+            View
           </Button>
-            <Button
-              color='secondary'
-              onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-                dispatch(thunkDeleteAnimal(props.commonName));
-              }}
-              onMouseEnter={() => setElevation(4)}
-              onMouseLeave={() => setElevation(2)}
-              size='small'
-            >
-              Delete
+          <Button
+            className={classes.deleteButton}
+            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+              dispatch(thunkDeleteAnimal(props.commonName));
+            }}
+            size='small'
+          >
+            Delete
           </Button>
-          </CardActions>
-        </Card>
-      </Grid>
-    </Grow>
+        </CardActions>
+      </Card>
+    </Grid>
   );
 };
+
+export const AnimalsListItem = React.memo(FunctionComponent, (prevProps, nextProps) => {
+  return prevProps.commonName === nextProps.commonName;
+});

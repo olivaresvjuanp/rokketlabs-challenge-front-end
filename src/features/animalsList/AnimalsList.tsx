@@ -42,9 +42,6 @@ const styles = (theme: Theme) => createStyles({
     bottom: theme.spacing(2),
     position: 'fixed',
     right: theme.spacing(2)
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(1),
   }
 });
 
@@ -95,29 +92,23 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
           />
         </Paper>
         <Box mt={2} />
-        {this.props.loading ?
-          <p></p>
-          :
-          <Grid
-            container
-            justify='center'
-            spacing={2}
-          >
-            {
-              this.props.animals.map(animal => <AnimalsListItem key={animal.commonName} {...animal} />)
-            }
-          </Grid>
-        }
+        <Grid
+          container
+          justify='center'
+          spacing={2}
+        >
+          {
+            this.props.animals.map(animal => <AnimalsListItem key={animal.commonName} {...animal} />)
+          }
+        </Grid>
         <Fab
           className={classes.fab}
           color='primary'
           onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
             this.setOpenAddAnimalDialog(true);
           }}
-          variant='extended'
         >
-          <AddIcon className={classes.extendedIcon} />
-          ADD ANIMAL
+          <AddIcon />
         </Fab>
         <AddAnimalDialog
           openAddAnimalDialog={this.state.openAddAnimalDialog}
