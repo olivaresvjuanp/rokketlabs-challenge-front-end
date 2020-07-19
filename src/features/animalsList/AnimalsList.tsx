@@ -98,7 +98,7 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
           spacing={2}
         >
           {
-            this.props.animals.map(animal => <AnimalsListItem key={animal.commonName} {...animal} />)
+            this.props.animals.map(animal => <AnimalsListItem key={animal.id} {...animal} />)
           }
         </Grid>
         <Fab

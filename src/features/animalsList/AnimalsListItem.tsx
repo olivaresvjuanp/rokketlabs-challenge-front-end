@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 const FunctionComponent: React.FunctionComponent<Animal> = props => {
-  console.debug(`Rendering MemorizedAnimalsListItem (props.commonName: ${props.commonName})`);
+  console.debug(`Rendering AnimasListItem (props.id: ${props.id})`);
 
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -61,7 +61,7 @@ const FunctionComponent: React.FunctionComponent<Animal> = props => {
           <Button
             className={classes.deleteButton}
             onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              dispatch(thunkDeleteAnimal(props.commonName));
+              dispatch(thunkDeleteAnimal(props.id as number));
             }}
             size='small'
           >

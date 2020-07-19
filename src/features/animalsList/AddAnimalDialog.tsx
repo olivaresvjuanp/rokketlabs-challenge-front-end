@@ -14,16 +14,9 @@ import {
   DialogActions,
   Button
 } from '@material-ui/core';
-import {
-  makeStyles,
-  useTheme
-} from '@material-ui/core/styles';
 
 import { thunkAddAnimal } from './animalsListSlice';
 import { RootState } from '../../app/store';
-
-const useStyles = makeStyles({
-});
 
 interface AddAnimalDialogProps {
   openAddAnimalDialog: boolean;
@@ -33,9 +26,6 @@ interface AddAnimalDialogProps {
 export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = props => {
   const dispatch = useDispatch();
   const loading = useSelector((state: RootState) => state.system.loading);
-  const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
 
   // Default photo for testing.
   const defaultPhotoUrl = 'https://rokketlabs-full-stack-challenge.s3-sa-east-1.amazonaws.com/default-animal-photo.jpg';

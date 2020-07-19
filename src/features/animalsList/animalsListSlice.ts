@@ -5,8 +5,10 @@ import {
 } from '@reduxjs/toolkit';
 
 import { setLoading } from '../system/systemSlice';
+import config from '../../config.json';
 
 export interface Animal { // Animal shape.
+  id?: number;
   photoUrl: string;
   commonName: string;
   scientificName: string;
@@ -24,7 +26,7 @@ const initialState: AnimalsListState = {
 };
 
 /**
- * Slice:
+ * ===== Slice =====
  * https://redux-toolkit.js.org/tutorials/intermediate-tutorial#understanding-slices
  */
 
@@ -44,14 +46,14 @@ export const animalsListSlice = createSlice({
     },
     updateAnimal: (state, action: PayloadAction<Animal>) => {
       state.animals = state.animals.map((animal: Animal): Animal => {
-        return animal.commonName === action.payload.commonName ?
+        return animal.id === action.payload.id ?
           action.payload :
           animal
       });
     },
-    deleteAnimal: (state, action: PayloadAction<string>) => {
+    deleteAnimal: (state, action: PayloadAction<number>) => {
       state.animals = state.animals.filter((animal: Animal): boolean => {
-        return animal.commonName !== action.payload
+        return animal.id !== action.payload
       });
 
       state.count--; // Testing.
@@ -69,20 +71,19 @@ export const {
 } = animalsListSlice.actions;
 
 /**
- * Async actions:
+ * ===== Async actions =====
  * https://redux-toolkit.js.org/tutorials/advanced-tutorial#thinking-in-thunks
  */
 
 /**
- * // TODO: We have to set the API URL in config.json file.
- * // TODO: Handle HTTP 500 error correctly.
- * Async action to get animals from the DB.
+ * // TODO: Handle errors correctly.
+ * Async action to get animals.
  * @returns between 1 and 5 animals, and a count of all animals in the DB.
  */
 export const thunkGetAnimalsList = createAsyncThunk('animals/get', async (temp, thunkApi) => {
   thunkApi.dispatch(setLoading(true));
 
-  const res = await fetch('http://localhost:3000/api/animals');
+  const res = await fetch(`${config.apiUrl}/animals`);
   const resJSON = await res.json();
 
   thunkApi.dispatch(setLoading(false));
@@ -98,16 +99,15 @@ export const thunkGetAnimalsList = createAsyncThunk('animals/get', async (temp, 
 });
 
 /**
- * // TODO: We have to set the API URL in config.json file.
- * // TODO: Handle HTTP 500 error correctly.
- * Async action to add an animal to the DB.
+ * // TODO: Handle errors correctly.
+ * Async action to add an animal.
  * @param animal
  * @returns the added animal from the DB.
  */
 export const thunkAddAnimal = createAsyncThunk('animal/add', async (animal: Animal, thunkApi) => {
   thunkApi.dispatch(setLoading(true));
 
-  const res = await fetch(`http://localhost:3000/api/animals`, {
+  const res = await fetch(`${config.apiUrl}/animals`, {
     body: JSON.stringify(animal),
     headers: {
       'Content-Type': 'application/json'
@@ -129,16 +129,43 @@ export const thunkAddAnimal = createAsyncThunk('animal/add', async (animal: Anim
 });
 
 /**
- * // TODO: We have to set the API URL in config.json file.
- * // TODO: Handle HTTP 500 correctly.
- * Async action to delete an animal from the DB.
- * @param commonName
- * @returns HTTP status code.
+ * // TODO: Handle errors corresctly.
+ * Async action to update an animal.
+ * @param animal
+ * @returns // TODO
  */
-export const thunkDeleteAnimal = createAsyncThunk('animal/delete', async (commonName: string, thunkApi) => {
+export const thunkUpdateAnimal = createAsyncThunk('animal/update', async (animal: Animal, thunkApi) => {
   thunkApi.dispatch(setLoading(true));
 
-  const res = await fetch(`http://localhost:3000/api/animals/${commonName}`, {
+  const res = await fetch(`${config.apiUrl}/animals`, {
+    body: JSON.stringify(animal),
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'PATCH'
+  });
+
+  thunkApi.dispatch(setLoading(false));
+
+  switch (res.status) {
+    case 200:
+      thunkApi.dispatch(updateAnimal(animal));
+
+    case 500:
+      return thunkApi.rejectWithValue(res.status);
+  }
+});
+
+/**
+ * // TODO: Handle errors corresctly.
+ * Async action to delete an animal.
+ * @param id
+ * @returns // TODO
+ */
+export const thunkDeleteAnimal = createAsyncThunk('animal/delete', async (id: number, thunkApi) => {
+  thunkApi.dispatch(setLoading(true));
+
+  const res = await fetch(`${config.apiUrl}/animals/${id}`, {
     headers: {
       'Content-Type': 'application/json'
     },
@@ -149,7 +176,7 @@ export const thunkDeleteAnimal = createAsyncThunk('animal/delete', async (common
 
   switch (res.status) {
     case 200:
-      thunkApi.dispatch(deleteAnimal(commonName));
+      thunkApi.dispatch(deleteAnimal(id));
 
     case 500:
       return thunkApi.rejectWithValue(res.status);
