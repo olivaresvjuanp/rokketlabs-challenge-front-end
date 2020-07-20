@@ -22,8 +22,11 @@ import {
 import { Add as AddIcon } from '@material-ui/icons';
 
 import { AddAnimalDialog } from './AddAnimalDialog';
+import {
+  thunkGetCount,
+  thunkGetAnimals
+} from './animalsListSlice';
 import { AnimalsListItem } from './AnimalsListItem';
-import { thunkGetAnimalsList } from './animalsListSlice';
 import { RootState } from '../../app/store';
 
 const styles = (theme: Theme) => createStyles({
@@ -46,16 +49,16 @@ const styles = (theme: Theme) => createStyles({
 });
 
 // https://material-ui.com/guides/typescript/#augmenting-your-props-using-withstyles
-interface AnimalsProps extends PropsFromRedux, WithStyles<typeof styles> {
+interface AnimalsListProps extends PropsFromRedux, WithStyles<typeof styles> {
 }
 
-interface AnimalsOwnState {
+interface AnimalsListOwnState {
   openAddAnimalDialog: boolean;
   page: number;
 }
 
-class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
-  constructor(props: AnimalsProps) {
+class AnimalsList extends React.Component<AnimalsListProps, AnimalsListOwnState> {
+  constructor(props: AnimalsListProps) {
     super(props);
 
     this.state = {
@@ -67,7 +70,12 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
   }
 
   componentDidMount() {
-    this.props.thunkGetAnimalsList();
+    console.debug('AnimalsList => componentDidMount');
+
+    this.props.thunkGetCount()
+      .then(() => {
+        this.props.thunkGetAnimals(this.state.page);
+      });
   }
 
   render() {
@@ -85,6 +93,11 @@ class AnimalsList extends React.Component<AnimalsProps, AnimalsOwnState> {
             color='primary'
             count={Math.ceil(this.props.count / 5)}
             onChange={(event: React.ChangeEvent<unknown>, page: number) => {
+              this.setState({
+                page
+              });
+
+              this.props.thunkGetAnimals(page);
             }}
             page={this.state.page}
             showFirstButton
@@ -140,7 +153,8 @@ const mapState = (state: RootState) => ({
 
 // Map dispatch to props.
 const mapDispatch = {
-  thunkGetAnimalsList
+  thunkGetCount,
+  thunkGetAnimals
 };
 
 const connector = connect(

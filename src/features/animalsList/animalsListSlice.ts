@@ -34,11 +34,11 @@ export const animalsListSlice = createSlice({
   name: 'animalsList',
   initialState,
   reducers: {
-    setAnimals: (state, action: PayloadAction<Animal[]>) => {
-      state.animals = action.payload;
-    },
     setCount: (state, action: PayloadAction<number>) => {
       state.count = action.payload;
+    },
+    setAnimals: (state, action: PayloadAction<Animal[]>) => {
+      state.animals = action.payload;
     },
     addAnimal: (state, action: PayloadAction<Animal>) => {
       state.animals = [...state.animals, action.payload];
@@ -63,8 +63,8 @@ export const animalsListSlice = createSlice({
 
 // Export animalsSlice actions (we will be able to use them with react-redux's useDispatch hook).
 export const {
-  setAnimals,
   setCount,
+  setAnimals,
   addAnimal,
   updateAnimal,
   deleteAnimal
@@ -77,21 +77,42 @@ export const {
 
 /**
  * // TODO: Handle errors correctly.
- * Async action to get animals.
- * @returns between 1 and 5 animals, and a count of all animals in the DB.
+ * Async action to get the number of animals in the DB.
+ * @returns // TODO
  */
-export const thunkGetAnimalsList = createAsyncThunk('animals/get', async (temp, thunkApi) => {
+export const thunkGetCount = createAsyncThunk('animals/get-count', async (temp, thunkApi) => {
   thunkApi.dispatch(setLoading(true));
 
-  const res = await fetch(`${config.apiUrl}/animals`);
+  const res = await fetch(`${config.apiUrl}/animals/get-count`);
   const resJSON = await res.json();
 
   thunkApi.dispatch(setLoading(false));
 
   switch (res.status) {
     case 200:
-      thunkApi.dispatch(setAnimals(resJSON.animals as Animal[]));
-      thunkApi.dispatch(setCount(resJSON.count as number));
+      thunkApi.dispatch(setCount(resJSON.data.count as number));
+
+    case 500:
+      return thunkApi.rejectWithValue(res.status);
+  }
+});
+
+/**
+ * // TODO: Handle errors correctly.
+ * Async action to get animals.
+ * @returns // TODO
+ */
+export const thunkGetAnimals = createAsyncThunk('animals/get-animals/', async (page: number, thunkApi) => {
+  thunkApi.dispatch(setLoading(true));
+
+  const res = await fetch(`${config.apiUrl}/animals/get-animals/${page}`);
+  const resJSON = await res.json();
+
+  thunkApi.dispatch(setLoading(false));
+
+  switch (res.status) {
+    case 200:
+      thunkApi.dispatch(setAnimals(resJSON.data.animals as Animal[]));
 
     case 500:
       return thunkApi.rejectWithValue(res.status);
@@ -102,7 +123,7 @@ export const thunkGetAnimalsList = createAsyncThunk('animals/get', async (temp, 
  * // TODO: Handle errors correctly.
  * Async action to add an animal.
  * @param animal
- * @returns the added animal from the DB.
+ * @returns // TODO
  */
 export const thunkAddAnimal = createAsyncThunk('animal/add', async (animal: Animal, thunkApi) => {
   thunkApi.dispatch(setLoading(true));
@@ -121,7 +142,7 @@ export const thunkAddAnimal = createAsyncThunk('animal/add', async (animal: Anim
 
   switch (res.status) {
     case 200:
-      thunkApi.dispatch(addAnimal(resJSON as Animal));
+      thunkApi.dispatch(addAnimal(resJSON.data.animal as Animal));
 
     case 500:
       return thunkApi.rejectWithValue(res.status);
@@ -145,11 +166,13 @@ export const thunkUpdateAnimal = createAsyncThunk('animal/update', async (animal
     method: 'PATCH'
   });
 
+  const resJSON = await res.json();
+
   thunkApi.dispatch(setLoading(false));
 
   switch (res.status) {
     case 200:
-      thunkApi.dispatch(updateAnimal(animal));
+      thunkApi.dispatch(updateAnimal(resJSON.data.animal as Animal));
 
     case 500:
       return thunkApi.rejectWithValue(res.status);
