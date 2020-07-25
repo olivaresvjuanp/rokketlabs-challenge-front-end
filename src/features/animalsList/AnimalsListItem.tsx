@@ -1,6 +1,8 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import {
+  Grow,
   Grid,
   Card,
   CardActionArea,
@@ -13,10 +15,8 @@ import {
 import { red } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
 
-import {
-  Animal,
-  thunkDeleteAnimal
-} from './animalsListSlice';
+import { Animal } from './animalsListSlice';
+import { thunkDeleteAnimal } from '../../thunks';
 
 const useStyles = makeStyles({
   card: {
@@ -30,45 +30,52 @@ const useStyles = makeStyles({
 const FunctionComponent: React.FunctionComponent<Animal> = props => {
   console.debug(`Rendering AnimasListItem (props.id: ${props.id})`);
 
+  const history = useHistory();
   const dispatch = useDispatch();
   const classes = useStyles();
 
   return (
     <Grid item>
-      <Card className={classes.card} elevation={2} square>
-        <CardActionArea>
-          <CardMedia
-            alt={props.commonName}
-            component='img'
-            image={props.photoUrl}
-            onDragStart={(event: React.DragEvent<HTMLImageElement>): void => {
-              event.preventDefault();
+      <Grow in={true}>
+        <Card className={classes.card} elevation={2} square>
+          <CardActionArea
+            onClick={() => {
+              history.push(`/animal-details/${props.id}`);
             }}
-            title={props.commonName}
-          />
-        </CardActionArea>
-        <CardContent>
-          <Typography gutterBottom>{props.commonName}</Typography>
-          <Typography color='textSecondary' noWrap variant='body2'>{props.scientificName}</Typography>
-        </CardContent>
-        <CardActions>
-          <Button
-            color='secondary'
-            size='small'
           >
-            View
-          </Button>
-          <Button
-            className={classes.deleteButton}
-            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-              dispatch(thunkDeleteAnimal(props.id as number));
-            }}
-            size='small'
-          >
-            Delete
-          </Button>
-        </CardActions>
-      </Card>
+            <CardMedia
+              alt={props.commonName}
+              component='img'
+              image={props.photoUrl}
+              onDragStart={(event: React.DragEvent<HTMLImageElement>): void => {
+                event.preventDefault();
+              }}
+              title={props.commonName}
+            />
+          </CardActionArea>
+          <CardContent>
+            <Typography gutterBottom>{props.commonName}</Typography>
+            <Typography color='textSecondary' noWrap variant='body2'>{props.scientificName}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              color='secondary'
+              size='small'
+            >
+              VIEW DETAILS
+            </Button>
+            <Button
+              className={classes.deleteButton}
+              onClick={() => {
+                dispatch(thunkDeleteAnimal(props.id as number));
+              }}
+              size='small'
+            >
+              DELETE
+            </Button>
+          </CardActions>
+        </Card>
+      </Grow>
     </Grid>
   );
 };

@@ -41,10 +41,10 @@ export const Header: React.FunctionComponent = () => {
     <AppBar
       color='inherit'
       elevation={4}
-      position='static'
+      position='fixed'
     >
       <Box height={4}>
-        {useSelector((state: RootState) => state.system.loading) && <LinearProgress className={classes.linearProgress} />}
+        {useSelector((state: RootState) => state.system.loading.isLoading) && <LinearProgress className={classes.linearProgress} />}
       </Box>
       <Toolbar variant='dense'>
         <Typography className={classes.title} variant='h6'>
@@ -52,7 +52,7 @@ export const Header: React.FunctionComponent = () => {
         </Typography>
         {useSelector((state: RootState) => state.system.theme.palette.type) === 'light' &&
           <IconButton
-            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            onClick={() => {
               dispatch(setThemePaletteType('dark'));
             }}
           >
@@ -61,7 +61,7 @@ export const Header: React.FunctionComponent = () => {
         }
         {useSelector((state: RootState) => state.system.theme.palette.type) === 'dark' &&
           <IconButton
-            onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+            onClick={() => {
               dispatch(setThemePaletteType('light'));
             }}
           >
@@ -76,7 +76,7 @@ export const Header: React.FunctionComponent = () => {
           <GitHubIcon />
         </IconButton>
         <Menu
-          id='ghb-menu'
+          id='github-button-menu'
           anchorEl={anchorEl}
           anchorOrigin={{
             horizontal: 'center',

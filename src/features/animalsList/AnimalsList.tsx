@@ -22,12 +22,12 @@ import {
 import { Add as AddIcon } from '@material-ui/icons';
 
 import { AddAnimalDialog } from './AddAnimalDialog';
+import { AnimalsListItem } from './AnimalsListItem';
+import { RootState } from '../../app/store';
 import {
   thunkGetCount,
   thunkGetAnimals
-} from './animalsListSlice';
-import { AnimalsListItem } from './AnimalsListItem';
-import { RootState } from '../../app/store';
+} from '../../thunks';
 
 const styles = (theme: Theme) => createStyles({
   paper: {
@@ -72,10 +72,8 @@ class AnimalsList extends React.Component<AnimalsListProps, AnimalsListOwnState>
   componentDidMount() {
     console.debug('AnimalsList => componentDidMount');
 
-    this.props.thunkGetCount()
-      .then(() => {
-        this.props.thunkGetAnimals(this.state.page);
-      });
+    this.props.thunkGetCount();
+    this.props.thunkGetAnimals(this.state.page);
   }
 
   render() {
@@ -117,7 +115,7 @@ class AnimalsList extends React.Component<AnimalsListProps, AnimalsListOwnState>
         <Fab
           className={classes.fab}
           color='primary'
-          onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+          onClick={() => {
             this.setOpenAddAnimalDialog(true);
           }}
         >

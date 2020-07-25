@@ -4,8 +4,13 @@ import {
 } from '@reduxjs/toolkit';
 import { PaletteType } from '@material-ui/core';
 
+type Loading = {
+  isLoading: boolean;
+  type: string;
+}
+
 type SystemState = {
-  loading: boolean;
+  loading: Loading;
 
   theme: {
     palette: {
@@ -15,10 +20,13 @@ type SystemState = {
 }
 
 const initialState: SystemState = {
-  loading: false,
+  loading: {
+    isLoading: false,
+    type: ''
+  },
   theme: {
     palette: {
-      type: 'light'
+      type: 'dark'
     }
   }
 };
@@ -32,8 +40,17 @@ export const systemSlice = createSlice({
   name: 'system',
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
+    startLoading: (state, action: PayloadAction<string>) => {
+      state.loading = {
+        isLoading: true,
+        type: action.payload
+      };
+    },
+    stopLoading: state => {
+      state.loading = {
+        isLoading: false,
+        type: ''
+      };
     },
     setThemePaletteType: (state, action: PayloadAction<PaletteType>) => {
       state.theme.palette.type = action.payload;
@@ -42,6 +59,7 @@ export const systemSlice = createSlice({
 });
 
 export const {
-  setLoading,
+  startLoading,
+  stopLoading,
   setThemePaletteType
 } = systemSlice.actions;

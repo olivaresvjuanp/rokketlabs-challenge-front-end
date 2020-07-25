@@ -1,23 +1,28 @@
 import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   CssBaseline,
-  Container,
-  Box
+  Container
 } from '@material-ui/core';
+import { deepPurple } from '@material-ui/core/colors';
 import {
   createMuiTheme,
   makeStyles,
   ThemeProvider
 } from '@material-ui/core/styles';
-import { deepPurple } from '@material-ui/core/colors';
 import Particles from 'react-tsparticles';
 
 import 'fontsource-roboto';
 
 import { RootState } from './app/store';
-import { Header } from './features/header/Header';
+import { Alerts } from './features/alerts/Alerts';
 import AnimalsList from './features/animalsList/AnimalsList';
+import { Header } from './features/header/Header';
 
 const useStyles = makeStyles(theme => ({
   particles: {
@@ -25,8 +30,13 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     position: 'fixed',
     right: 0,
-    top: 48,
+    top: theme.spacing(6) + 4,
     zIndex: -1
+  },
+  container: {
+    marginTop: theme.spacing(6) + 4,
+    paddingBottom: theme.spacing(4),
+    paddingTop: theme.spacing(2)
   }
 }));
 
@@ -36,6 +46,11 @@ export const App: React.FunctionComponent = () => {
   // Custom Material-UI theme.
   const theme = createMuiTheme({
     overrides: {
+      MuiCssBaseline: {
+        '@global': {
+          // ...
+        }
+      },
       MuiFilledInput: {
         root: {
           borderTopLeftRadius: 0,
@@ -60,6 +75,7 @@ export const App: React.FunctionComponent = () => {
     <ThemeProvider theme={theme}>
       {/* Kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
+      <Alerts />
       <Header />
       <Particles
         className={classes.particles}
@@ -142,11 +158,15 @@ export const App: React.FunctionComponent = () => {
           detectRetina: true
         }}
       />
-      <Box mb={4} mt={2}>
-        <Container maxWidth='xl'>
-          <AnimalsList />
-        </Container>
-      </Box>
+      <Container className={classes.container} maxWidth='xl'>
+        <Router>
+          <Switch>
+            <Route exact path='/'>
+              <AnimalsList />
+            </Route>
+          </Switch>
+        </Router>
+      </Container>
     </ThemeProvider>
   );
 };

@@ -15,8 +15,8 @@ import {
   Button
 } from '@material-ui/core';
 
-import { thunkAddAnimal } from './animalsListSlice';
 import { RootState } from '../../app/store';
+import { thunkAddAnimal } from '../../thunks';
 
 interface AddAnimalDialogProps {
   openAddAnimalDialog: boolean;
@@ -25,23 +25,32 @@ interface AddAnimalDialogProps {
 
 export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = props => {
   const dispatch = useDispatch();
-  const loading = useSelector((state: RootState) => state.system.loading);
 
-  // Default photo for testing.
+  // Default values (testing).
   const defaultPhotoUrl = 'https://rokketlabs-full-stack-challenge.s3-sa-east-1.amazonaws.com/default-animal-photo.jpg';
-  const [photoUrl, setPhotoUrl] = React.useState(defaultPhotoUrl);
+  const defaultCommonName = 'Default CN';
+  const defaultScientificName = 'Default Scientific Name';
+  const defaultHabitat = '0000000000000000';
 
-  const [commonName, setCommonName] = React.useState('');
-  const [scientificName, setScientificName] = React.useState('');
-  const [habitat, setHabitat] = React.useState('');
+  const [photoUrl, setPhotoUrl] = React.useState(defaultPhotoUrl);
+  const [commonName, setCommonName] = React.useState(defaultCommonName);
+  const [scientificName, setScientificName] = React.useState(defaultScientificName);
+  const [habitat, setHabitat] = React.useState(defaultHabitat);
+
+  const isLoading = useSelector((state: RootState) => {
+    return state.system.loading.isLoading && state.system.loading.type === 'thunk-add-animal';
+  });
+
+  const errors = useSelector((state: RootState) => {
+    return state.animals.addAnimalFormErrors;
+  });
 
   return (
     <Dialog
       aria-describedby='add-animal-dialog'
       aria-labelledby='Add animal dialog'
-      disableBackdropClick={loading}
+      disableBackdropClick={isLoading}
       fullWidth
-      //keepMounted
       maxWidth='xs'
       open={props.openAddAnimalDialog}
       onClose={() => {
@@ -49,9 +58,9 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
       }}
       onExited={() => {
         setPhotoUrl(defaultPhotoUrl);
-        setCommonName('');
-        setScientificName('');
-        setHabitat('');
+        setCommonName(defaultCommonName);
+        setScientificName(defaultScientificName);
+        setHabitat(defaultHabitat);
       }}
       PaperProps={{
         square: true
@@ -62,7 +71,10 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
         <DialogContentText>
           We recommend to looking for animals here:
           {' '}
-          <Link color='secondary' href='https://www.nationalgeographic.org/projects/photo-ark/explore/'>
+          <Link
+            color='secondary'
+            href='https://www.nationalgeographic.org/projects/photo-ark/explore/' target='_blank'
+          >
             National Geographic Photo Ark
           </Link>
         </DialogContentText>
@@ -82,10 +94,10 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
           <TextField
             autoFocus
             color='secondary'
-            disabled={loading}
-            error={false}
-            helperText='It must be a valid URL.'
+            disabled={isLoading}
+            error={errors.includes('photoUrl')}
             fullWidth
+            helperText='It must be a valid URL (protocol required).'
             label='Photo URL'
             name='photo-url'
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -98,9 +110,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
           <Box mt={2} />
           <TextField
             color='secondary'
-            disabled={loading}
-            error={false}
+            disabled={isLoading}
+            error={errors.includes('commonName')}
             fullWidth
+            helperText='It must be unique, and it must be between 1 and 32 characters.'
+            inputProps={{ maxLength: 32 }}
             label='Common name'
             name='common-name'
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -113,9 +127,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
           <Box mt={2} />
           <TextField
             color='secondary'
-            disabled={loading}
-            error={false}
+            disabled={isLoading}
+            error={errors.includes('scientificName')}
             fullWidth
+            helperText='Between 1 and 32 characters.'
+            inputProps={{ maxLength: 32 }}
             label='Scientific name'
             name='scientific-name'
             onChange={(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -128,9 +144,11 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
           <Box mt={2} />
           <TextField
             color='secondary'
-            disabled={loading}
-            error={false}
+            disabled={isLoading}
+            error={errors.includes('habitat')}
             fullWidth
+            helperText='Between 16 and 1000 characters.'
+            inputProps={{ maxLength: 1000 }}
             label='Habitat'
             multiline
             name='habitat'
@@ -138,7 +156,6 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
               setHabitat(event.target.value);
             }}
             required
-            rows={5}
             value={habitat}
             variant='filled'
           />
@@ -147,8 +164,8 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
       <DialogActions disableSpacing>
         <Button
           color='secondary'
-          disabled={loading}
-          onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+          disabled={isLoading}
+          onClick={() => {
             props.setOpenAddAnimalDialog(false);
           }}
         >
@@ -156,7 +173,7 @@ export const AddAnimalDialog: React.FunctionComponent<AddAnimalDialogProps> = pr
         </Button>
         <Button
           color='secondary'
-          disabled={loading}
+          disabled={isLoading}
           form='add-animal-form'
           type='submit'
         >
